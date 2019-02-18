@@ -1,4 +1,20 @@
-from firstname_lastname_Project_CLASS import KenKen
+# -------------------------------------------------------------------------------
+# Ken_Lee_Project_GUI.py
+# Name: Ken Lee
+# Python Version: 3.6.4
+# -------------------------------------------------------------------------------
+# Honor Code Statement: I received no assistance on this assignment that
+#                       violates the ethical guidelines as set forth by the
+#                       instructor and the class syllabus.
+# -------------------------------------------------------------------------------
+# References:
+# -------------------------------------------------------------------------------
+# Comments to grader:
+# -------------------------------------------------------------------------------
+# Code: Code starts here
+# -------------------------------------------------------------------------------
+
+from Ken_Lee_Project_CLASS import KenKen
 from tkinter import *
 from tkinter import messagebox
 
@@ -14,8 +30,8 @@ class TheGUI(Frame):
         self.puzzles = self.kenken.getpuzzles()
         self.linelist = self.kenken.getlines()
 
+        # List of choices the user has
         self.choice = ['', '1', '2', '3', '4', '5']
-        self.surrender_list = []  # List unique to surrend method to hold all relevant numbers
 
         # Buttons for the puzzle
         self.lblPuz = StringVar(self)
@@ -26,7 +42,6 @@ class TheGUI(Frame):
         self.good_luck = Label(self, text='GOOD LUCK!', font='Arial 10 bold').pack()
         self.win = Button(self, text='WIN?', command=self.check).pack(side=TOP, fill=X)
         self.next_puzzle = Button(self, text='Next Puzzle', command=self.next).pack(fill=X)
-
         self.reset_button = Button(self, text='RESET', command=self.reset).pack(side=LEFT)
         self.exit_button = Button(self, text='EXIT', command=self.exit).pack(side=RIGHT, fill=X)
         self.surrender = Button(self, text='Surrender?',
@@ -35,14 +50,10 @@ class TheGUI(Frame):
         # Put all the buttons into a list
         self.buttonlist = [self.win, self.next_puzzle, self.reset_button, self.exit_button, self.surrender]
 
-        self.solution = self.kenken.surrender(self.counter)
-
         # Creating the components on the GUI
         self.w = Canvas(master, width=502, height=503)
         self.w.pack()
 
-        self.tt = StringVar(self)
-        self.sqlist = []
         # This keeps track of the values for each block
         self.movelist = [[0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]]
         self.numbers = [[0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]]
@@ -60,7 +71,7 @@ class TheGUI(Frame):
             for j in range(0, 500, 100):
                 x = j + 100
                 y = i + 100
-                self.squares = self.w.create_rectangle(j, i, x, y)
+                self.w.create_rectangle(j, i, x, y)
 
         # While loop to set the KenKen lines
         # self.linelist grabs the getlines method from the class file
@@ -83,7 +94,7 @@ class TheGUI(Frame):
         # items gathers all the indexes in the list
         # self.counter keeps track of which puzzle it is
         for items in range(len(self.puzzles)):
-            self.current_puzzle = self.puzzles[items][self.counter]
+            current_puzzle = self.puzzles[items][self.counter]
 
         # This outputs everything inside self.current_puzzle into each square
         # The start position for x sets the x axis start at 25 pixels
@@ -93,27 +104,29 @@ class TheGUI(Frame):
         for x in range(25, 500, 100):
             for y in range(20, 500, 100):
                 self.w.create_text(x, y, font="Calibri 16 bold",
-                                   text=self.current_puzzle[puzzle_index])
+                                   text=current_puzzle[puzzle_index])
                 puzzle_index += 1
 
+        # Nested for loop that helps with placing the desired number into the squares upon button click
         x = 0
         for i in range(50, 500, 100):
             y = 0
             for j in range(50, 500, 100):
-                self.numbers[x][y] = self.w.create_text(i, j, font=("Calibri 24 bold"), text=self.choice[0])
-                a = self.numbers
+                self.numbers[x][y] = self.w.create_text(i, j, font="Calibri 24 bold",
+                                                        text=self.choice[0])
                 y += 1
             x += 1
 
-    def exit(self):
+    @staticmethod
+    def exit():
         # Method that exits the GUI when the Exit button is pressed
         exit()
 
     def check(self):
         # Checks to see if the user wins
-        self.check = self.kenken.checkit(self.movelist, self.counter)
-        if self.movelist == self.check:
-            messagebox.showinfo('Congratulations','You won the game!')
+        check = self.kenken.checkit(self.movelist, self.counter)
+        if self.movelist == check:
+            messagebox.showinfo('Congratulations', 'You won the game!')
 
     def change(self, event):
         # Updates the buttons to the current number
@@ -139,19 +152,15 @@ class TheGUI(Frame):
         self.buttonlist.append(self.lbl1)
         self.create_widgets()
 
-        '''for i in range(len(self.buttonlist)):
-            self.buttonlist[i].destroy()'''
-
     def surrend(self):
         # Shows the solution
         self.reset()
-        for items in self.solution:
-            self.surrender_list.append(items)
-        surrender_list1 = []
+        solution = self.kenken.surrender(self.counter)  # Call surrender method from class, set as var
+        surrender_list = []  # List unique to surrend method to hold all relevant numbers
 
-        for i in range(5):
-            for j in range(5):
-                surrender_list1.append(self.surrender_list[i][j])
+        # Loop through solution and input numbers into surrender_list
+        for items in range(len(solution)):
+            surrender_list.extend(solution[items])
 
         # Nested for loops that place the numbers when surrender is clicked
         # self.w.create_text outputs all the numbers in surrender_list one by one through count
@@ -159,27 +168,22 @@ class TheGUI(Frame):
         for x in range(50, 500, 100):
             for y in range(50, 500, 100):
                 self.w.create_text(x, y, font="Calibri 24 bold",
-                                   text=surrender_list1[count])
+                                   text=surrender_list[count])
                 count += 1
-        self.counter +=1
 
     def next(self):
         # Reset the number choices and create the next puzzle
         count: int = 0
-        self.counter += 1
-        while count < 3:
+        self.counter += 1  # Increment self.count upon use of self.next_puzzle
+        while count != 3:  # While loop that loops until count hits 3
             if self.counter < 3:
                 self.lblPuz.set("Puzzle " + str(self.counter + 1))
-                self.reset()
-                self.create_widgets()
             else:
-                messagebox.showinfo('KenKen', "You're out of puzzles!")
-                self.counter == 0
-                break
+                self.counter -= 3  # Decrement self.counter back to the first puzzle
+                messagebox.showinfo('KenKen', "That was the last puzzle!\n "
+                                              "Press OK to play again.")
+                self.lblPuz.set("Puzzle " + str(self.counter + 1))
+            self.reset()
+            self.create_widgets()
             count += 1
 
-root = Tk()
-root.title("KenKen")
-root.geometry("600x660")
-TheGUI(root)
-root.mainloop()
