@@ -1,3 +1,5 @@
+[FOR EDUCATIONAL PURPOSES ONLY].
+
 Taken from IT206 - Project Specification
 
 "The purpose of this project is to demonstrate an acceptable level of expertise with the fundamental
